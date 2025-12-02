@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Daily Routine – Writing & Speaking Coach</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #e0f2fe 0, #0f172a 55%);
+      color: #0f172a;
+    }
+
+    .container {
+      width: 1100px;
+      max-width: 96vw;
+      background: rgba(248, 250, 252, 0.96);
+      backdrop-filter: blur(18px);
+      border-radius: 26px;
+      padding: 22px 24px 18px;
+      box-shadow:
+        0 22px 45px rgba(15, 23, 42, 0.45),
+        0 0 0 1px rgba(148, 163, 184, 0.25);
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+      gap: 22px;
+    }
+
+    @media (max-width: 900px) {
+      .container {
+        grid-template-columns: 1fr;
+        max-height: none;
+        margin: 16px 0;
+      }
+    }
+
+    h2 {
+      margin: 0 0 6px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .subtitle {
+      margin: 0 0 10px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    textarea {
+      width: 100%;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      padding: 11px 13px;
+      resize: vertical;
+      min-height: 190px;
+      font-size: 0.94rem;
+      line-height: 1.5;
+      outline: none;
+      background: #f8fafc;
+      color: #020617;
+    }
+
+    textarea:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.6);
+      background: #ffffff;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+      margin-bottom: 8px;
+    }
+
+    button {
+      border-radius: 999px;
+      border: none;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.08s ease, box-shadow 0.12s ease, background 0.12s ease;
+      white-space: nowrap;
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0ea5e9, #22c55e);
+      color: #f9fafb;
+      box-shadow: 0 10px 20px rgba(56, 189, 248, 0.45);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 14px 26px rgba(22, 163, 74, 0.45);
+    }
+
+    .btn-secondary {
+      background: #e0f2fe;
+      color: #0369a1;
+      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25);
+    }
+
+    .btn-secondary:hover {
+      background: #dbeafe;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px dashed #cbd5f5;
+      color: #0f172a;
+    }
+
+    .btn-ghost:hover {
+      background: #e5e7eb;
+    }
+
+    .btn-danger {
+      background: #fee2e2;
+      color: #b91c1c;
+      box-shadow: 0 6px 14px rgba(239, 68, 68, 0.3);
+    }
+
+    .left-section,
+    .right-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    #analysisText {
+      border-radius: 16px;
+      background: #f1f5f9;
+      padding: 10px 12px;
+      font-size: 0.86rem;
+      color: #0f172a;
+      max-height: 190px;
+      overflow: auto;
+    }
+
+    #analysisText ul {
+      margin: 6px 0;
+      padding-left: 18px;
+    }
+
+    #analysisText li {
+      margin-bottom: 2px;
+    }
+
+    .ai-output {
+      margin-top: 6px;
+    }
+
+    .ai-output label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #475569;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    #aiOutput {
+      min-height: 120px;
+      background: #eef2ff;
+      border-color: #c7d2fe;
+      font-size: 0.9rem;
+    }
+
+    #scoreCanvas {
+      width: 100%;
+      height: 220px;
+      border-radius: 20px;
+      overflow: hidden;
+      background: #020617;
+      display: block;
+    }
+
+    .small-text {
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-top: 4px;
+    }
+
+    #speakingText {
+      min-height: 90px;
+      font-size: 0.9rem;
+    }
+
+    .rec-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+
+    audio {
+      margin-top: 6px;
+    }
+
+    .extra-lists {
+      grid-column: 1 / -1;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed #cbd5e1;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .extra-lists {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .extra-lists h3 {
+      margin: 0 0 4px;
+      font-size: 0.9rem;
+      color: #0f172a;
+    }
+
+    .extra-lists p {
+      margin: 0;
+      font-size: 0.8rem;
+      color: #475569;
+    }
+
+    .tag-line {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- COLUMNA IZQUIERDA: WRITING -->
+    <div class="left-section">
+      <h2>Step 1 · Writing – My daily routine</h2>
+      <p class="subtitle">
+        Escribe tu rutina diaria en inglés. La herramienta la califica, te orienta y sugiere cómo ampliarla.
+      </p>
+      <textarea id="writingInput" placeholder="Example: I usually get up at 6:30 a.m. Then I have breakfast with my family..."></textarea>
+
+      <div class="button-row">
+        <button id="analyzeBtn" class="btn-primary">✅ Analizar y calificar</button>
+        <button id="aiExpandBtn" class="btn-ghost">✨ Sugerir versión ampliada (IA local)</button>
+      </div>
+
+      <div id="analysisText">
+        <p>
+          Escribe tu rutina diaria en inglés. Luego haz clic en
+          <strong>“Analizar y calificar”</strong> o simplemente empieza a escribir y el puntaje aparecerá
+          automáticamente.
+        </p>
+      </div>
+
+      <div id="aiOutputWrapper" class="ai-output" style="display: none;">
+        <label for="aiOutput">Versión sugerida para ampliar tu texto (modifícala libremente):</label>
+        <textarea id="aiOutput" readonly></textarea>
+        <p class="small-text">
+          Sugerencia generada de forma automática a partir de tu texto. No es un modelo perfecto de IA,
+          pero te sirve como base para enriquecer tus ideas.
+        </p>
+      </div>
+    </div>
+
+    <!-- COLUMNA DERECHA: SCORE + SPEAKING -->
+    <div class="right-section">
+      <h2>Step 2 · Score & Speaking practice</h2>
+      <canvas id="scoreCanvas"></canvas>
+      <div id="statusLabel" class="small-text">
+        Escribe tu rutina para ver el puntaje y una retroalimentación en tiempo real.
+      </div>
+
+      <button id="useForSpeaking" class="btn-secondary" style="margin-top: 8px;">
+        ➜ Usar mi texto para hablar (speaking)
+      </button>
+      <textarea id="speakingText" placeholder="Aquí aparecerá tu texto para leerlo en voz alta cuando termines."></textarea>
+
+      <div class="rec-buttons">
+        <button id="startRecBtn" class="btn-primary">🎙️ Empezar grabación</button>
+        <button id="stopRecBtn" class="btn-danger" disabled>■ Detener</button>
+      </div>
+      <div id="recordStatus" class="small-text"></div>
+      <audio id="audioPlayback" controls style="width: 100%; display: none;"></audio>
+      <a id="downloadLink" download="daily_routine.mp3" style="display: none; font-size: 0.85rem; margin-top: 4px;">
+        ⬇️ Descargar audio (MP3 / formato navegador)
+      </a>
+      <p class="tag-line">
+        Nota: Para grabar necesitas permitir el micrófono y abrir la página en HTTPS (por ejemplo, GitHub Pages).
+      </p>
+    </div>
+
+    <!-- LISTAS EXTRA: VERBOS, CONECTORES, ADVERBIOS -->
+    <div class="extra-lists">
+      <div>
+        <h3>Verb toolbox – Daily routine</h3>
+        <p>
+          get up, wake up, take a shower, brush my teeth, have breakfast, have lunch, have dinner,
+          go to school, go to work, study English, do my homework, help at home, watch TV,
+          listen to music, play soccer, play basketball, play videogames, go to bed, sleep.
+        </p>
+      </div>
+      <div>
+        <h3>Frequency adverbs – Adverbios de frecuencia</h3>
+        <p>
+          always, usually, often, sometimes, hardly ever, never.
+          <br />Úsalos antes del verbo principal: <em>I usually get up at 7:00.</em>
+        </p>
+      </div>
+      <div>
+        <h3>Connectors – Secuencia de acciones</h3>
+        <p>
+          first, first of all, then, after that, later, before that, next, finally,
+          in the morning, in the afternoon, at night.
+          <br />Ejemplo: <em>First I get up, then I take a shower, after that I have breakfast.</em>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Librería para convertir audio a MP3 (si el navegador lo permite) -->
+  <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.0/lame.min.js"></script>
+
+  <script>
+    "use strict";
+
+    // Listas base para evaluación y sugerencias
+    const verbsList = [
+      "get up",
+      "wake up",
+      "take a shower",
+      "brush my teeth",
+      "have breakfast",
+      "have lunch",
+      "have dinner",
+      "go to school",
+      "go to work",
+      "study english",
+      "do my homework",
+      "help at home",
+      "watch tv",
+      "listen to music",
+      "play soccer",
+      "play basketball",
+      "play videogames",
+      "go to bed",
+      "sleep"
+    ];
+
+    const adverbsList = [
+      "always",
+      "usually",
+      "often",
+      "sometimes",
+      "hardly ever",
+      "never"
+    ];
+
+    const connectorsList = [
+      "first",
+      "first of all",
+      "then",
+      "after that",
+      "later",
+      "before that",
+      "next",
+      "finally",
+      "in the morning",
+      "in the afternoon",
+      "at night"
+    ];
+
+    let scoreCanvas, scoreCtx;
+    let lastScore = 0;
+    const dpr = window.devicePixelRatio || 1;
+
+    // --- Funciones Canvas (score visual) ---
+    function resizeCanvas() {
+      if (!scoreCanvas || !scoreCtx) return;
+      const rect = scoreCanvas.getBoundingClientRect();
+      scoreCanvas.width = rect.width * dpr;
+      scoreCanvas.height = rect.height * dpr;
+      scoreCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function drawScore(percent) {
+      lastScore = percent;
+      if (!scoreCanvas || !scoreCtx) return;
+
+      const rect = scoreCanvas.getBoundingClientRect();
+      const w = rect.width;
+      const h = rect.height;
+
+      scoreCtx.clearRect(0, 0, w, h);
+
+      const gradient = scoreCtx.createLinearGradient(0, 0, w, h);
+      gradient.addColorStop(0, "#020617");
+      gradient.addColorStop(1, "#1e293b");
+      scoreCtx.fillStyle = gradient;
+      scoreCtx.fillRect(0, 0, w, h);
+
+      scoreCtx.save();
+      scoreCtx.fillStyle = "rgba(148, 163, 184, 0.9)";
+      scoreCtx.font = "14px system-ui, sans-serif";
+      scoreCtx.textAlign = "left";
+      scoreCtx.textBaseline = "top";
+      scoreCtx.fillText("Writing score – Daily routine", 24, 24);
+
+      const centerX = w / 2;
+      const centerY = h / 2 + 10;
+      const radius = Math.min(w, h) / 3;
+
+      const startAngle = Math.PI * 0.75;
+      const endAngle = Math.PI * 2.25;
+
+      scoreCtx.lineWidth = 14;
+      scoreCtx.lineCap = "round";
+
+      // Background arc
+      scoreCtx.strokeStyle = "rgba(51, 65, 85, 0.7)";
+      scoreCtx.beginPath();
+      scoreCtx.arc(centerX, centerY, radius, startAngle, endAngle);
+      scoreCtx.stroke();
+
+      // Progress arc
+      const progressAngle = startAngle + (endAngle - startAngle) * (percent / 100);
+      let color;
+      if (percent < 40) color = "#f97373";
+      else if (percent < 70) color = "#fb923c";
+      else if (percent < 90) color = "#22c55e";
+      else color = "#38bdf8";
+
+      scoreCtx.strokeStyle = color;
+      scoreCtx.beginPath();
+      scoreCtx.arc(centerX, centerY, radius, startAngle, progressAngle);
+      scoreCtx.stroke();
+
+      // Text in the middle
+      scoreCtx.fillStyle = "#e5e7eb";
+      scoreCtx.font = "32px system-ui, sans-serif";
+      scoreCtx.textAlign = "center";
+      scoreCtx.textBaseline = "middle";
+      scoreCtx.fillText(percent + "%", centerX, centerY - 8);
+
+      scoreCtx.fillStyle = "#94a3b8";
+      scoreCtx.font = "13px system-ui, sans-serif";
+      let label;
+      if (percent === 0) label = "Empieza a escribir 😃";
+      else if (percent < 40) label = "Necesitas más detalles y conectores";
+      else if (percent < 70) label = "Vas por buen camino, amplía un poco más";
+      else if (percent < 90) label = "Muy buen trabajo, casi perfecto";
+      else label = "¡Excelente rutina!";
+
+      scoreCtx.fillText(label, centerX, centerY + 22);
+      scoreCtx.restore();
+    }
+
+    function updateStatusLabel(percent) {
+      const label = document.getElementById("statusLabel");
+      if (!label) return;
+
+      if (percent === 0) {
+        label.textContent =
+          "Escribe tu rutina para obtener un puntaje automático y comentarios específicos.";
+      } else if (percent < 40) {
+        label.textContent =
+          "Recomendación: añade más actividades, adverbios de frecuencia y conectores de secuencia.";
+      } else if (percent < 70) {
+        label.textContent =
+          "Tu rutina es comprensible, pero todavía puedes desarrollarla más y organizar mejor las ideas.";
+      } else if (percent < 90) {
+        label.textContent =
+          "Buen nivel de detalle. Revisa tiempos verbales, conectores y vocabulario para pulir tu texto.";
+      } else {
+        label.textContent =
+          "Descripción muy completa. Ahora úsala para practicar speaking y tu pronunciación.";
+      }
+    }
+
+    // --- Evaluación de Writing ---
+    function countMatches(text, list) {
+      let count = 0;
+      list.forEach((item) => {
+        if (text.includes(item.toLowerCase())) count++;
+      });
+      return count;
+    }
+
+    function evaluateWriting(text) {
+      const cleaned = text.trim();
+      if (!cleaned) {
+        return {
+          percent: 0,
+          detailsHtml:
+            "<p>Escribe tu rutina para obtener un puntaje y una retroalimentación detallada.</p>",
+          metrics: null
+        };
+      }
+
+      const lower = cleaned.toLowerCase();
+      const words = cleaned.split(/\s+/).filter(Boolean);
+      const wordCount = words.length;
+
+      const verbsFound = countMatches(lower, verbsList);
+      const advFound = countMatches(lower, adverbsList);
+      const connFound = countMatches(lower, connectorsList);
+      const sentenceCount = (cleaned.match(/[.!?]/g) || []).length;
+
+      let lengthScore = Math.min(wordCount / 80, 1);
+      if (wordCount < 30) {
+        lengthScore = wordCount / 60;
+      }
+
+      const verbScore = Math.min(verbsFound / 4, 1);
+      const advScore = Math.min(advFound / 3, 1);
+      const connScore = Math.min(connFound / 3, 1);
+      const sentenceScore = Math.min(sentenceCount / 5, 1);
+
+      const percent = Math.round(
+        (lengthScore * 0.30 +
+          verbScore * 0.25 +
+          advScore * 0.20 +
+          connScore * 0.15 +
+          sentenceScore * 0.10) *
+          100
+      );
+
+      let globalMsg;
+      if (percent < 40) {
+        globalMsg = "Tu texto está iniciando. Necesita más información y organización.";
+      } else if (percent < 70) {
+        globalMsg = "La idea es comprensible, pero todavía puedes desarrollarla mucho más.";
+      } else if (percent < 90) {
+        globalMsg = "Muy buen trabajo, tu rutina es clara. Solo ajusta algunos detalles.";
+      } else {
+        globalMsg = "Excelente, tu descripción es muy completa y coherente.";
+      }
+
+      const detailsHtml = `
+        <p><strong>Puntaje global:</strong> ${percent}% – ${globalMsg}</p>
+        <ul>
+          <li><strong>Extensión:</strong> ${wordCount} palabras (meta: 60–90).</li>
+          <li><strong>Verbos de rutina:</strong> ${verbsFound} de la lista detectados.</li>
+          <li><strong>Adverbios de frecuencia:</strong> ${advFound} (${adverbsList.join(", ")}).</li>
+          <li><strong>Conectores de secuencia:</strong> ${connFound} (${connectorsList
+        .slice(0, 6)
+        .join(", ")}...).</li>
+          <li><strong>Oraciones:</strong> ${sentenceCount} frases con punto.</li>
+        </ul>
+      `;
+
+      return {
+        percent,
+        detailsHtml,
+        metrics: { wordCount, verbsFound, advFound, connFound, sentenceCount }
+      };
+    }
+
+    function generateImprovementTips(text, m) {
+      if (!text.trim()) return "";
+
+      const suggestions = [];
+      if (!m) m = { wordCount: 0, verbsFound: 0, advFound: 0, connFound: 0, sentenceCount: 0 };
+
+      if (m.wordCount < 60) {
+        suggestions.push(
+          "Añade 2 o 3 actividades más (por ejemplo: before school, in the afternoon, at night) para completar tu rutina."
+        );
+      }
+      if (m.advFound === 0) {
+        suggestions.push(
+          "Incluye mínimo 2 adverbios de frecuencia (always, usually, often, sometimes, never) para mostrar qué tan seguido haces cada actividad."
+        );
+      }
+      if (m.connFound === 0) {
+        suggestions.push(
+          "Usa conectores de secuencia (first, then, after that, later, finally) para ordenar mejor tus ideas."
+        );
+      }
+      if (m.sentenceCount < 4) {
+        suggestions.push(
+          "Transforma ideas sueltas en oraciones completas con sujeto + verbo + complemento. Ej.: 'I get up at 6:30' en lugar de solo '6:30'."
+        );
+      }
+
+      const playSoccerMatch = text.match(/I\s+play\s+socc(er|or)/i);
+      if (playSoccerMatch) {
+        suggestions.push(
+          'En lugar de solo "I play soccer", puedes escribir: "I usually play soccer with my friends every Saturday afternoon, and then I go back home to have dinner."'
+        );
+      }
+
+      if (suggestions.length === 0) {
+        suggestions.push(
+          "Relee tu texto en voz alta y revisa tiempos verbales (he/she con -s), uso de mayúsculas y puntuación para hacerlo aún más natural."
+        );
+      }
+
+      let html = "<p><strong>Sugerencias para mejorar:</strong></p><ul>";
+      suggestions.forEach((s) => {
+        html += `<li>${s}</li>`;
+      });
+      html += "</ul>";
+      return html;
+    }
+
+    // “IA local”: genera una versión ampliada a partir de los verbos de rutina detectados
+    function buildExpandedVersion(text) {
+      const cleaned = text.trim();
+      if (!cleaned) {
+        return "Primero escribe tu rutina para poder sugerir una versión ampliada.";
+      }
+
+      const lower = cleaned.toLowerCase();
+      const usedVerbs = verbsList.filter((v) => lower.includes(v.toLowerCase()));
+      const defaultVerbs = ["get up", "have breakfast", "go to school", "do my homework", "go to bed"];
+
+      const v1 = usedVerbs[0] || defaultVerbs[0];
+      const v2 = usedVerbs[1] || defaultVerbs[1];
+      const v3 = usedVerbs[2] || defaultVerbs[2];
+      const v4 = usedVerbs[3] || defaultVerbs[3];
+
+      let hobby = "play soccer";
+      if (lower.includes("basketball")) hobby = "play basketball";
+      else if (lower.includes("video game") || lower.includes("videogame") || lower.includes("games"))
+        hobby = "play videogames";
+
+      const expanded =
+        `I usually ${v1} at 6:30 a.m. After that, I ${v2} with my family and we talk about our plans for the day. ` +
+        `Then I ${v3} and I have classes in the morning. I often ${v4} in the afternoon and I ${hobby} with my friends. ` +
+        `In the evening, I sometimes help at home and I do my homework before I relax. ` +
+        `Finally, I usually go to bed at about 10:30 p.m.`;
+
+      return expanded;
+    }
+
+    // --- Grabación de audio y descarga (intento MP3) ---
+    function setupRecording() {
+      const startBtn = document.getElementById("startRecBtn");
+      const stopBtn = document.getElementById("stopRecBtn");
+      const statusEl = document.getElementById("recordStatus");
+      const audioEl = document.getElementById("audioPlayback");
+      const downloadLink = document.getElementById("downloadLink");
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        statusEl.textContent =
+          "La grabación de audio no está disponible en este navegador. Prueba con Chrome o Edge en computador.";
+        startBtn.disabled = true;
+        stopBtn.disabled = true;
+        return;
+      }
+
+      let mediaRecorder = null;
+      let chunks = [];
+      let audioContext = null;
+
+      startBtn.addEventListener("click", async () => {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+          chunks = [];
+
+          mediaRecorder.ondataavailable = (e) => {
+            if (e.data && e.data.size > 0) {
+              chunks.push(e.data);
+            }
+          };
+
+          mediaRecorder.onstop = async () => {
+            const blob = new Blob(chunks, { type: "audio/webm" });
+            audioEl.style.display = "block";
+
+            try {
+              const mp3Blob = await convertToMp3(blob);
+              const url = URL.createObjectURL(mp3Blob);
+              audioEl.src = url;
+              downloadLink.href = url;
+              downloadLink.style.display = "inline-block";
+              downloadLink.textContent = "⬇️ Descargar audio (MP3)";
+              statusEl.textContent = "Grabación lista. Reproduce tu audio o descárgalo en MP3.";
+            } catch (err) {
+              console.warn("No se pudo convertir a MP3, usando formato original:", err);
+              const url = URL.createObjectURL(blob);
+              audioEl.src = url;
+              downloadLink.href = url;
+              downloadLink.style.display = "inline-block";
+              downloadLink.textContent = "⬇️ Descargar audio (formato del navegador)";
+              statusEl.textContent =
+                "Grabación lista. El formato depende de tu navegador (por ejemplo, WEBM u OGG).";
+            }
+          };
+
+          mediaRecorder.start();
+          startBtn.disabled = true;
+          stopBtn.disabled = false;
+          statusEl.textContent =
+            "Grabando... cuando termines, haz clic en “Detener” para generar tu audio.";
+        } catch (err) {
+          console.error(err);
+          statusEl.textContent =
+            "No se pudo acceder al micrófono. Revisa los permisos del navegador o el uso de HTTPS.";
+        }
+      });
+
+      stopBtn.addEventListener("click", () => {
+        if (mediaRecorder && mediaRecorder.state !== "inactive") {
+          mediaRecorder.stop();
+          startBtn.disabled = false;
+          stopBtn.disabled = true;
+        }
+      });
+
+      async function convertToMp3(blob) {
+        if (typeof lamejs === "undefined") {
+          throw new Error("lamejs no está disponible (no se pudo cargar la librería).");
+        }
+
+        if (!audioContext) {
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        const arrayBuffer = await blob.arrayBuffer();
+        const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+        const channelData = audioBuffer.getChannelData(0);
+        const sampleRate = audioBuffer.sampleRate;
+        const mp3encoder = new lamejs.Mp3Encoder(1, sampleRate, 128);
+        const blockSize = 1152;
+        const mp3Data = [];
+
+        const samples = floatTo16BitPCM(channelData);
+
+        for (let i = 0; i < samples.length; i += blockSize) {
+          const chunk = samples.subarray(i, i + blockSize);
+          const mp3buf = mp3encoder.encodeBuffer(chunk);
+          if (mp3buf.length > 0) {
+            mp3Data.push(mp3buf);
+          }
+        }
+
+        const end = mp3encoder.flush();
+        if (end.length > 0) {
+          mp3Data.push(end);
+        }
+
+        return new Blob(mp3Data, { type: "audio/mpeg" });
+      }
+
+      function floatTo16BitPCM(float32Array) {
+        const output = new Int16Array(float32Array.length);
+        for (let i = 0; i < float32Array.length; i++) {
+          const s = Math.max(-1, Math.min(1, float32Array[i]));
+          output[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+        }
+        return output;
+      }
+    }
+
+    // --- Utilidad: debounce para no recalcular en cada tecla ---
+    function debounce(fn, delay) {
+      let timer;
+      return function (...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(this, args), delay);
+      };
+    }
+
+    // --- Inicialización general ---
+    function initApp() {
+      const writingInput = document.getElementById("writingInput");
+      const analyzeBtn = document.getElementById("analyzeBtn");
+      const aiExpandBtn = document.getElementById("aiExpandBtn");
+      const analysisText = document.getElementById("analysisText");
+      const aiOutputWrapper = document.getElementById("aiOutputWrapper");
+      const aiOutput = document.getElementById("aiOutput");
+      const useForSpeaking = document.getElementById("useForSpeaking");
+      const speakingText = document.getElementById("speakingText");
+
+      scoreCanvas = document.getElementById("scoreCanvas");
+      scoreCtx = scoreCanvas.getContext("2d");
+      resizeCanvas();
+      drawScore(0);
+
+      function runEvaluation() {
+        const result = evaluateWriting(writingInput.value);
+        const tips = generateImprovementTips(
+          writingInput.value,
+          result.metrics || { wordCount: 0, verbsFound: 0, advFound: 0, connFound: 0, sentenceCount: 0 }
+        );
+        analysisText.innerHTML = result.detailsHtml + tips;
+        drawScore(result.percent);
+        updateStatusLabel(result.percent);
+      }
+
+      analyzeBtn.addEventListener("click", runEvaluation);
+      writingInput.addEventListener("input", debounce(runEvaluation, 700));
+
+      aiExpandBtn.addEventListener("click", () => {
+        const suggestion = buildExpandedVersion(writingInput.value);
+        aiOutput.value = suggestion;
+        aiOutputWrapper.style.display = "block";
+      });
+
+      useForSpeaking.addEventListener("click", () => {
+        const base = writingInput.value.trim();
+        speakingText.value =
+          base ||
+          "I usually get up at 6:30 a.m. Then I have breakfast with my family and go to school in the morning.";
+      });
+
+      window.addEventListener("resize", () => {
+        resizeCanvas();
+        drawScore(lastScore);
+      });
+
+      setupRecording();
+    }
+
+    window.addEventListener("load", initApp);
+  </script>
+</body>
+</html>
